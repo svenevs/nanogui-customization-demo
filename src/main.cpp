@@ -1,17 +1,40 @@
 #include <my_theme.h>
-
-#include <nanogui/label.h>
-#include <nanogui/layout.h>
-#include <nanogui/screen.h>
-#include <nanogui/window.h>
+#include <iostream>
+#include <nanogui/nanogui.h>
 
 class CustomScreen : public nanogui::Screen {
 public:
-    CustomScreen() : nanogui::Screen({400, 400}, "Custom Font") {
+    CustomScreen() : nanogui::Screen({800, 800}, "Custom Font") {
         this->setTheme(new MyTheme(mNVGContext));
     }
+
+    bool keyboardEvent(int key, int scancode, int action, int modifiers) override {
+        if (Screen::keyboardEvent(key, scancode, action, modifiers))
+            return true;
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            setVisible(false);
+            return true;
+        }
+        return false;
+    }
+
+    nanogui::Theme *getTheme() { return mTheme; }
 };
 
+// spliced from nanogui example2
+enum test_enum {
+    Item1 = 0,
+    Item2,
+    Item3
+};
+
+bool bvar = true;
+int ivar = 12345678;
+double dvar = 3.1415926;
+float fvar = (float)dvar;
+std::string strval = "A string";
+test_enum enumval = Item2;
+nanogui::Color colval(0.5f, 0.5f, 0.7f, 1.f);
 
 int main(int /*argc*/, const char ** /*argv*/) {
     nanogui::init();
@@ -19,11 +42,49 @@ int main(int /*argc*/, const char ** /*argv*/) {
     {
         CustomScreen *screen = new CustomScreen();
         nanogui::Window *window = new nanogui::Window(screen, "");
-        window->setSize({300, 300});
+        window->setSize({400, 600});
         window->setLayout(new nanogui::GroupLayout());
+        // add some with the spirax font
         (new nanogui::Label(window, "First", "spirax"))->setFontSize(66);
         (new nanogui::Label(window, "Second", "spirax"))->setFontSize(66);
         (new nanogui::Label(window, "Third", "spirax"))->setFontSize(66);
+        // add some with the membra font
+        (new nanogui::Label(window, "First", "membra"))->setFontSize(44);
+        (new nanogui::Label(window, "Second", "membra"))->setFontSize(44);
+        (new nanogui::Label(window, "Third", "membra"))->setFontSize(44);
+
+        window = new nanogui::Window(screen, "Full Override");
+        window->setLayout(new nanogui::GroupLayout());
+        new nanogui::Label(window, "Group 1");
+        auto *cb = new nanogui::CheckBox(window, "A CheckBox");
+
+        // spliced from nanogui example2
+        // bool enabled = true;
+        // nanogui::FormHelper *gui = new nanogui::FormHelper(screen);
+        // window = gui->addWindow({10, 10}, "Form helper example");
+        // gui->addGroup("Basic types");
+        // gui->addVariable("bool", bvar);
+        // gui->addVariable("string", strval);
+
+        // gui->addGroup("Validating fields");
+        // gui->addVariable("int", ivar)->setSpinnable(true);
+        // gui->addVariable("float", fvar);
+        // gui->addVariable("double", dvar)->setSpinnable(true);
+
+        // gui->addGroup("Complex types");
+        // gui->addVariable("Enumeration", enumval, enabled)
+        //    ->setItems({"Item 1", "Item 2", "Item 3"});
+        // gui->addVariable("Color", colval)
+        //    ->setFinalCallback([](const nanogui::Color &c) {
+        //          std::cout << "ColorPicker Final Callback: ["
+        //                    << c.r() << ", "
+        //                    << c.g() << ", "
+        //                    << c.b() << ", "
+        //                    << c.w() << "]" << std::endl;
+        //      });
+
+        // gui->addGroup("Other widgets");
+        // gui->addButton("A button", []() { std::cout << "Button pressed." << std::endl; });
 
         screen->setVisible(true);
         screen->performLayout();

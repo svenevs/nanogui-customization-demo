@@ -5,10 +5,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-file(
-  COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources/Spirax-Regular.ttf
-  DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/ext/nanogui/resources
-)
+list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spirax/Spirax-Regular.ttf")
+list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/membra/membra.ttf")
+list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spectral/SpectralSC-Regular.ttf")
+list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spectral/SpectralSC-Bold.ttf")
 
 # Disable building extras we won't need (pure C++ project)
 set(NANOGUI_BUILD_EXAMPLE OFF CACHE BOOL " " FORCE)
@@ -25,15 +25,12 @@ set_property(TARGET glfw glfw_objects nanogui PROPERTY FOLDER "dependencies")
 add_definitions(${NANOGUI_EXTRA_DEFS})
 
 # On top of adding the path to nanogui/include, you may need extras
-include_directories(${NANOGUI_EXTRA_INCS})
+# include_directories(${NANOGUI_EXTRA_INCS})
 
-include_directories(include ext/nanogui/include)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/nanogui)
-add_library(font-demo include/my_theme.h src/my_theme.cpp)
+include_directories(include ext/nanogui/include ${NANOGUI_EXTRA_INCS})
+# include_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/nanogui)
+add_executable(testFont include/my_theme.h src/main.cpp)
 
 # Lastly, additional libraries may have been built for you.  In addition to linking
 # against NanoGUI, we need to link against those as well.
-target_link_libraries(font-demo nanogui ${NANOGUI_EXTRA_LIBS})
-
-add_executable(testFont src/main.cpp)
-target_link_libraries(testFont font-demo)
+target_link_libraries(testFont nanogui ${NANOGUI_EXTRA_LIBS})
