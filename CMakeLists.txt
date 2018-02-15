@@ -5,15 +5,29 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Populate the list of extra fonts NanoGUI should compile.
 list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spirax/Spirax-Regular.ttf")
 list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/membra/membra.ttf")
 list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spectral/SpectralSC-Regular.ttf")
 list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spectral/SpectralSC-Bold.ttf")
 
 # Disable building extras we won't need (pure C++ project)
-set(NANOGUI_BUILD_EXAMPLE OFF CACHE BOOL " " FORCE)
+set(NANOGUI_BUILD_EXAMPLE ON  CACHE BOOL " " FORCE)  # author is checking results
 set(NANOGUI_BUILD_PYTHON  OFF CACHE BOOL " " FORCE)
 set(NANOGUI_INSTALL       OFF CACHE BOOL " " FORCE)
+
+# Convenience setup for the developer of this repo, makes checking the example
+# applications easier to type is all.  AKA you shouldn't need to do this for any
+# actual libraries you are developing.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib")
+# Always run e.g., ./bin/example1 (icons directory needs to be in current working dir)
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/icons")
+file(GLOB NANOGUI_EXAMPLE_ICONS "${CMAKE_CURRENT_BINARY_DIR}/ext/nanogui/icons/*.png")
+foreach (png ${NANOGUI_EXAMPLE_ICONS})
+  file(COPY "${png}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/icons")
+endforeach()
 
 # Add the configurations from nanogui
 add_subdirectory(ext/nanogui)
@@ -25,10 +39,7 @@ set_property(TARGET glfw glfw_objects nanogui PROPERTY FOLDER "dependencies")
 add_definitions(${NANOGUI_EXTRA_DEFS})
 
 # On top of adding the path to nanogui/include, you may need extras
-# include_directories(${NANOGUI_EXTRA_INCS})
-
 include_directories(include ext/nanogui/include ${NANOGUI_EXTRA_INCS})
-# include_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/nanogui)
 add_executable(testFont include/my_theme.h src/main.cpp)
 
 # Lastly, additional libraries may have been built for you.  In addition to linking

@@ -21,6 +21,44 @@ public:
 
         if (mSpectralFont == -1 || mSpectralBoldFont == -1)
             throw std::runtime_error("Could not load the `spectral` fonts!");
+
+        // a not-well-thought-out quasi-light scheme.  this was mostly just inverting
+        // colors set in nanogui/theme.cpp.  note that for things like
+        // `mWindowHeaderGradientTop`, since we are in the derived class if you change
+        // `mButtonGradientTopUnfocused`, and still want the window and button to have
+        // the same colors, you need to *RESET* it.  there's no requirement to do so
+        // of course!
+        using nanogui::Color;
+        mDropShadow                       = Color(100, 128);
+        mTransparent                      = Color(100, 0);
+        mBorderDark                       = Color(129, 255);
+        mBorderLight                      = Color(192, 255);
+        mBorderMedium                     = Color(135, 255);
+        mTextColor                        = Color(43, 230);
+        mDisabledTextColor                = Color(83, 230);
+        mTextColorShadow                  = Color(60, 0);
+        mIconColor                        = mTextColor;
+
+        mButtonGradientTopFocused         = Color(148, 255);
+        mButtonGradientBotFocused         = Color(164, 255);
+        mButtonGradientTopUnfocused       = Color(158, 255);
+        mButtonGradientBotUnfocused       = Color(174, 255);
+        mButtonGradientTopPushed          = Color(129, 255);
+        mButtonGradientBotPushed          = Color(141, 255);
+
+        /* Window-related */
+        mWindowFillUnfocused              = Color(143, 230);
+        mWindowFillFocused                = Color(145, 230);
+        mWindowTitleUnfocused             = Color(83, 230);
+        mWindowTitleFocused               = Color(43, 230);
+
+        mWindowHeaderGradientTop          = mButtonGradientTopUnfocused;
+        mWindowHeaderGradientBot          = mButtonGradientBotUnfocused;
+        mWindowHeaderSepTop               = mBorderLight;
+        mWindowHeaderSepBot               = mBorderDark;
+
+        mWindowPopup                      = Color(150, 255);
+        mWindowPopupTransparent           = Color(150, 0);
     }
 
     /// The ``"sans"`` font.  Override in sub-classes to use a different font-face as the default.  Propagates to children.
