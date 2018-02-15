@@ -5,9 +5,13 @@
 class CustomScreen : public nanogui::Screen {
 public:
     CustomScreen() : nanogui::Screen({800, 800}, "Custom Font") {
-        this->setTheme(new MyTheme(mNVGContext));
+        // Important! before you can use the custom fonts, even if you are not
+        // setting the theme of a widget directly, you need to instantiate one
+        // so that the fonts are actually loaded!
+        mCustomTheme = new MyTheme(mNVGContext);
     }
 
+    /// Allow <ESCAPE> to close application.
     bool keyboardEvent(int key, int scancode, int action, int modifiers) override {
         if (Screen::keyboardEvent(key, scancode, action, modifiers))
             return true;
@@ -18,7 +22,10 @@ public:
         return false;
     }
 
-    nanogui::Theme *getTheme() { return mTheme; }
+    MyTheme *getCustomTheme() { return mCustomTheme; }
+
+protected:
+    MyTheme *mCustomTheme = nullptr;
 };
 
 // spliced from nanogui example2
@@ -41,7 +48,7 @@ int main(int /*argc*/, const char ** /*argv*/) {
 
     {
         CustomScreen *screen = new CustomScreen();
-        nanogui::Window *window = new nanogui::Window(screen, "");
+        nanogui::Window *window = new nanogui::Window(screen, "Manual Labels");
         window->setSize({400, 600});
         window->setLayout(new nanogui::GroupLayout());
         // add some with the spirax font
@@ -54,6 +61,8 @@ int main(int /*argc*/, const char ** /*argv*/) {
         (new nanogui::Label(window, "Third", "membra"))->setFontSize(44);
 
         window = new nanogui::Window(screen, "Full Override");
+        window->setTheme(screen->getCustomTheme());
+        // screen->addChild(window);
         window->setLayout(new nanogui::GroupLayout());
         new nanogui::Label(window, "Group 1");
         auto *cb = new nanogui::CheckBox(window, "A CheckBox");
