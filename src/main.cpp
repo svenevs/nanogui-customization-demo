@@ -4,7 +4,7 @@
 
 class CustomScreen : public nanogui::Screen {
 public:
-    CustomScreen() : nanogui::Screen({800, 800}, "Custom Font") {
+    CustomScreen(const nanogui::Vector2i &size) : nanogui::Screen(size, "Custom Font") {
         // Important! before you can use the custom fonts, even if you are not
         // setting the theme of a widget directly, you need to instantiate one
         // so that the fonts are actually loaded!
@@ -28,72 +28,67 @@ protected:
     MyTheme *mCustomTheme = nullptr;
 };
 
-// spliced from nanogui example2
-enum test_enum {
-    Item1 = 0,
-    Item2,
-    Item3
-};
+nanogui::Window *makeCompareWindow(nanogui::Widget *parent,
+                                   const std::string &title,
+                                   nanogui::Theme *theme = nullptr) {
+    using namespace nanogui;
+    Window *window = new Window(parent, title);
+    if (theme)
+        window->setTheme(theme);
+    // classes that use fonts:
+    // - Button
+    // - CheckBox
+    // - Graph
+    // - ImageView
+    // - Label
+    // - Screen ?
+    // - TextBox
+    // - Window
+    window->setLayout(new nanogui::GroupLayout());
+    new Label(window, "Group 1");
+    new Button(window, "A Button");
+    auto *cb = new CheckBox(window, "A CheckBox");
 
-bool bvar = true;
-int ivar = 12345678;
-double dvar = 3.1415926;
-float fvar = (float)dvar;
-std::string strval = "A string";
-test_enum enumval = Item2;
-nanogui::Color colval(0.5f, 0.5f, 0.7f, 1.f);
+    new Label(window, "Group 2");
+    new TextBox(window, "A TextBox");
+    Graph *graph = new Graph(window, "Some Function");
+    graph->setHeader("E = 2.35e-3");
+    graph->setFooter("Iteration 89");
+    VectorXf &func = graph->values();
+    func.resize(100);
+    for (int i = 0; i < 100; ++i)
+        func[i] = 0.5f * (0.5f * std::sin(i / 10.f) +
+                          0.5f * std::cos(i / 23.f) + 1);
+
+    return window;
+}
 
 int main(int /*argc*/, const char ** /*argv*/) {
     nanogui::init();
 
     {
-        CustomScreen *screen = new CustomScreen();
-        nanogui::Window *window = new nanogui::Window(screen, "Manual Labels");
-        window->setSize({400, 600});
-        window->setLayout(new nanogui::GroupLayout());
-        // add some with the spirax font
-        (new nanogui::Label(window, "First", "spirax"))->setFontSize(66);
-        (new nanogui::Label(window, "Second", "spirax"))->setFontSize(66);
-        (new nanogui::Label(window, "Third", "spirax"))->setFontSize(66);
+        using namespace nanogui;
+
+        CustomScreen *screen = new CustomScreen({800, 800});
+
+        // manual demonstration
+        Window *window = new Window(screen, "Manual Labels");
+        window->setLayout(new GroupLayout());
+        (new Label(window, "First", "spirax"))->setFontSize(33);
+        (new Label(window, "Second", "spirax"))->setFontSize(33);
+        (new Label(window, "Third", "spirax"))->setFontSize(33);
         // add some with the membra font
-        (new nanogui::Label(window, "First", "membra"))->setFontSize(44);
-        (new nanogui::Label(window, "Second", "membra"))->setFontSize(44);
-        (new nanogui::Label(window, "Third", "membra"))->setFontSize(44);
+        new Label(window, "First", "membra");
+        new Label(window, "Second", "membra");
+        new Label(window, "Third", "membra");
 
-        window = new nanogui::Window(screen, "Full Override");
-        window->setTheme(screen->getCustomTheme());
-        // screen->addChild(window);
-        window->setLayout(new nanogui::GroupLayout());
-        new nanogui::Label(window, "Group 1");
-        auto *cb = new nanogui::CheckBox(window, "A CheckBox");
+        // make one with the default theme
+        window = makeCompareWindow(screen, "Default Theme");
+        window->setPosition({125, 0});
 
-        // spliced from nanogui example2
-        // bool enabled = true;
-        // nanogui::FormHelper *gui = new nanogui::FormHelper(screen);
-        // window = gui->addWindow({10, 10}, "Form helper example");
-        // gui->addGroup("Basic types");
-        // gui->addVariable("bool", bvar);
-        // gui->addVariable("string", strval);
-
-        // gui->addGroup("Validating fields");
-        // gui->addVariable("int", ivar)->setSpinnable(true);
-        // gui->addVariable("float", fvar);
-        // gui->addVariable("double", dvar)->setSpinnable(true);
-
-        // gui->addGroup("Complex types");
-        // gui->addVariable("Enumeration", enumval, enabled)
-        //    ->setItems({"Item 1", "Item 2", "Item 3"});
-        // gui->addVariable("Color", colval)
-        //    ->setFinalCallback([](const nanogui::Color &c) {
-        //          std::cout << "ColorPicker Final Callback: ["
-        //                    << c.r() << ", "
-        //                    << c.g() << ", "
-        //                    << c.b() << ", "
-        //                    << c.w() << "]" << std::endl;
-        //      });
-
-        // gui->addGroup("Other widgets");
-        // gui->addButton("A button", []() { std::cout << "Button pressed." << std::endl; });
+        // make one with the custom theme
+        window = makeCompareWindow(screen, "Custom Theme", screen->getCustomTheme());
+        window->setPosition({360, 0});
 
         screen->setVisible(true);
         screen->performLayout();

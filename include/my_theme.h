@@ -17,7 +17,7 @@ public:
 
         // load the default fonts for this theme
         mSpectralFont     = nanogui::createFontMem(ctx, "spectral", "SpectralSC-Regular.ttf");
-        mSpectralBoldFont = nanogui::createFontMem(ctx, "spectral-bold", "SpectralSC-Regular.ttf");
+        mSpectralBoldFont = nanogui::createFontMem(ctx, "spectral-bold", "SpectralSC-Bold.ttf");
 
         if (mSpectralFont == -1 || mSpectralBoldFont == -1)
             throw std::runtime_error("Could not load the `spectral` fonts!");
@@ -26,7 +26,7 @@ public:
     /// The ``"sans"`` font.  Override in sub-classes to use a different font-face as the default.  Propagates to children.
     virtual std::string defaultFont() const { return "spectral"; }
     /// The ``"sans-bold"`` font.  Override in sub-classes to use a different font-face for \ref nanogui::Window.
-    virtual std::string defaultWindowFont() const { return "spectral-bold"; }
+    virtual std::string defaultBoldFont() const { return "spectral-bold"; }
 
     ~MyTheme() { }
 
