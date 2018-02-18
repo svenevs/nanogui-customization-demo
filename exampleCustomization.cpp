@@ -1,86 +1,19 @@
-#include <my_theme.h>
+#include "CustomTheme.hpp"
+#include "GLTexture.hpp"
+
 #include <nanogui/nanogui.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-#include <iostream>
 #include <vector>
-
-class GLTexture {
-public:
-    using handleType = std::unique_ptr<uint8_t[], void(*)(void*)>;
-    GLTexture() = default;
-    GLTexture(const std::string& textureName)
-        : mTextureName(textureName), mTextureId(0) {}
-
-    GLTexture(const std::string& textureName, GLint textureId)
-        : mTextureName(textureName), mTextureId(textureId) {}
-
-    GLTexture(const GLTexture& other) = delete;
-    GLTexture(GLTexture&& other) noexcept
-        : mTextureName(std::move(other.mTextureName)),
-        mTextureId(other.mTextureId) {
-        other.mTextureId = 0;
-    }
-    GLTexture& operator=(const GLTexture& other) = delete;
-    GLTexture& operator=(GLTexture&& other) noexcept {
-        mTextureName = std::move(other.mTextureName);
-        std::swap(mTextureId, other.mTextureId);
-        return *this;
-    }
-    ~GLTexture() noexcept {
-        if (mTextureId)
-            glDeleteTextures(1, &mTextureId);
-    }
-
-    GLuint texture() const { return mTextureId; }
-    const std::string& textureName() const { return mTextureName; }
-
-    /**
-    *  Load a file in memory and create an OpenGL texture.
-    *  Returns a handle type (an std::unique_ptr) to the loaded pixels.
-    */
-    handleType load(const std::string& fileName) {
-        if (mTextureId) {
-            glDeleteTextures(1, &mTextureId);
-            mTextureId = 0;
-        }
-        int force_channels = 0;
-        int w, h, n;
-        handleType textureData(stbi_load(fileName.c_str(), &w, &h, &n, force_channels), stbi_image_free);
-        if (!textureData)
-            throw std::invalid_argument("Could not load texture data from file " + fileName);
-        glGenTextures(1, &mTextureId);
-        glBindTexture(GL_TEXTURE_2D, mTextureId);
-        GLint internalFormat;
-        GLint format;
-        switch (n) {
-            case 1: internalFormat = GL_R8; format = GL_RED; break;
-            case 2: internalFormat = GL_RG8; format = GL_RG; break;
-            case 3: internalFormat = GL_RGB8; format = GL_RGB; break;
-            case 4: internalFormat = GL_RGBA8; format = GL_RGBA; break;
-            default: internalFormat = 0; format = 0; break;
-        }
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, GL_UNSIGNED_BYTE, textureData.get());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        return textureData;
-    }
-
-private:
-    std::string mTextureName;
-    GLuint mTextureId;
-};
 
 class CustomScreen : public nanogui::Screen {
 public:
-    CustomScreen(const nanogui::Vector2i &size) : nanogui::Screen(size, "Custom Font") {
-        // Important! before you can use the custom fonts, even if you are not
-        // setting the theme of a widget directly, you need to instantiate one
-        // so that the fonts are actually loaded!
+    CustomScreen(const nanogui::Vector2i &size)
+        : nanogui::Screen(size, "Custom Font") {
+
+        /* Important! before you can use the custom fonts, even if you are not
+         * setting the theme of a widget directly, you need to instantiate one
+         * so that the fonts are actually loaded!
+         */
         mCustomTheme = new MyTheme(mNVGContext);
 
         // load an image for creating the image view in makeCompareWindow
@@ -93,71 +26,85 @@ public:
     bool keyboardEvent(int key, int scancode, int action, int modifiers) override {
         if (Screen::keyboardEvent(key, scancode, action, modifiers))
             return true;
+
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             setVisible(false);
             return true;
         }
+
         return false;
     }
 
     nanogui::Window *makeCompareWindow(const std::string &title, bool customTheme) {
         using namespace nanogui;
         Window *window = new Window(this, title);
+
+        /* By setting the theme now *BEFORE* any children are added, this means that
+         * all new children created will inherit a reference to this custom theme.
+         *
+         * When you call setTheme after-the-fact, the same will occur -- calling
+         * setTheme on a widget propagates that theme to all children.
+         */
         if (customTheme)
             window->setTheme(mCustomTheme);
-        // classes that use fonts:
-        // - Button
-        // - CheckBox
-        // - Graph
-        // - ImageView
-        // - Label
-        // - Screen ?
-        // - TextBox
-        // - Window
+
+        /* The remainder of the code here is largely irrelevant, the setTheme is the
+         * important part.  Everything added below exists as a testing suite to make
+         * sure that all widgets that draw fonts are obeying the new theme's default
+         * font selections as defined by CustomTheme::defaultFont and
+         * CustomTheme::defaultBoldFont overrides (see CustomTheme.hpp).
+         */
         window->setLayout(new nanogui::GroupLayout());
 
+        /* test text box fonts */ {
+            new Label(window, "Text Boxes");
+            Widget *wrapper = new Widget(window);
+            GridLayout *grid_layout = new GridLayout();
+            grid_layout->setColAlignment({Alignment::Maximum, Alignment::Fill});
+            wrapper->setLayout(grid_layout);
+            new Label(wrapper, "TextBox : ");
+            (new TextBox(wrapper, "Some Text"))->setEditable(true);
+            new Label(wrapper, "IntBox : ");
+            (new IntBox<int>(wrapper))->setSpinnable(true);
+            new Label(wrapper, "FloatBox : ");
+            (new FloatBox<float>(wrapper))->setSpinnable(true);
+        }
 
-        new Label(window, "Text Boxes");
-        Widget *wrapper = new Widget(window);
-        GridLayout *grid_layout = new GridLayout();
-        grid_layout->setColAlignment({Alignment::Maximum, Alignment::Fill});
-        wrapper->setLayout(grid_layout);
-        new Label(wrapper, "TextBox : ");
-        (new TextBox(wrapper, "Some Text"))->setEditable(true);
-        new Label(wrapper, "IntBox : ");
-        (new IntBox<int>(wrapper))->setSpinnable(true);
-        new Label(wrapper, "FloatBox : ");
-        (new FloatBox<float>(wrapper))->setSpinnable(true);
-
-        new Label(window, "Image View");
-        // NOTE: there's only ever one image in imagesData!  The author is being
-        //       lazy and just re-using code from nanogui example1.cpp
-        auto imageView = new ImageView(window, mImagesData[0].first.texture());
-        imageView->setGridThreshold(20);
-        imageView->setPixelInfoThreshold(20);
-        imageView->setPixelInfoCallback(
-            [this, imageView](const Vector2i& index) -> std::pair<std::string, Color> {
-                auto &imageData = this->mImagesData[0].second;
-                auto &textureSize = imageView->imageSize();
-                std::string stringData;
-                uint16_t channelSum = 0;
-                for (int i = 0; i != 4; ++i) {
-                    auto &channelData = imageData[4*index.y()*textureSize.x() + 4*index.x() + i];
-                    channelSum += channelData;
-                    stringData += (std::to_string(static_cast<int>(channelData)) + "\n");
+        /* test ImageView fonts (needs callback, scroll up on image to see) */ {
+            new Label(window, "Image View");
+            // NOTE: there's only ever one image in imagesData!
+            auto imageView = new ImageView(window, mImagesData[0].first.texture());
+            imageView->setGridThreshold(20);
+            imageView->setPixelInfoThreshold(20);
+            // this is the same callback from nanogui src/example1.cpp
+            imageView->setPixelInfoCallback(
+                [this, imageView](const Vector2i& index) -> std::pair<std::string, Color> {
+                    auto &imageData = this->mImagesData[0].second;
+                    auto &textureSize = imageView->imageSize();
+                    std::string stringData;
+                    uint16_t channelSum = 0;
+                    for (int i = 0; i != 4; ++i) {
+                        auto &channelData = imageData[4*index.y()*textureSize.x() + 4*index.x() + i];
+                        channelSum += channelData;
+                        stringData += (std::to_string(static_cast<int>(channelData)) + "\n");
+                    }
+                    float intensity = static_cast<float>(255 - (channelSum / 4)) / 255.0f;
+                    float colorScale = intensity > 0.5f ? (intensity + 1) / 2 : intensity / 2;
+                    Color textColor = Color(colorScale, 1.0f);
+                    return { stringData, textColor };
                 }
-                float intensity = static_cast<float>(255 - (channelSum / 4)) / 255.0f;
-                float colorScale = intensity > 0.5f ? (intensity + 1) / 2 : intensity / 2;
-                Color textColor = Color(colorScale, 1.0f);
-                return { stringData, textColor };
-            }
-        );
+            );
+        }
 
+        // TabWidget used to test TabHeader and others while keeping the size manageable
         TabWidget* tabWidget = window->add<TabWidget>();
-        Widget *layer = tabWidget->createTab("Button Like");
-        layer->setLayout(new GroupLayout());
-        {
+
+        /* test button and checkbox fonts */ {
+            Widget *layer = tabWidget->createTab("Button Like");
+            layer->setLayout(new GroupLayout());
+
             new Label(layer, "Button Like");
+            // regular buttons
             Button *button = new Button(layer, "PushButton");
             button = new Button(layer, "RadioButton 1");
             button->setFlags(Button::Flags::RadioButton);
@@ -165,6 +112,8 @@ public:
             button->setFlags(Button::Flags::RadioButton);
             button = new Button(layer, "ToggleButton");
             button->setFlags(Button::Flags::ToggleButton);
+
+            // popup button
             PopupButton *popupBtn = new PopupButton(layer, "Popup", ENTYPO_ICON_EXPORT);
             Popup *popup = popupBtn->popup();
             // making sure the popup button for the custom theme stays in bounds
@@ -183,15 +132,17 @@ public:
             popupBtn->setSide(Popup::Side::Left);
             Popup *popupLeft = popupBtn->popup();
             popupLeft->setLayout(new GroupLayout());
+
+            // checkbox
             new CheckBox(popupLeft, "Another check box");
             auto *cb = new CheckBox(layer, "A CheckBox");
         }
 
-        // Use overloaded variadic add to fill the tab widget with Different tabs.
+        /* test the graph widget fonts */ {
+            Widget *layer = tabWidget->createTab("Function Graph");
+            layer->setLayout(new GroupLayout());
 
-        layer = tabWidget->createTab("Function Graph");
-        layer->setLayout(new GroupLayout());
-        {
+            // Same as nanogui src/example1.cpp
             new Label(layer, "Function Graph Widget");
             Graph *graph = layer->add<Graph>("Some Function");
 
@@ -246,7 +197,7 @@ protected:
     MyTheme *mCustomTheme = nullptr;
 };
 
-int main(int /*argc*/, const char ** /*argv*/) {
+int main(void) {
     nanogui::init();
 
     {
