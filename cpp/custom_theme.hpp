@@ -14,10 +14,10 @@ enum class ThemeChoice {
 class CustomTheme : public nanogui::Theme {
 public:
     /// The ``"spectral"`` font.  Overriding this method is what informs NanoGUI to use it.
-    virtual std::string defaultFont() const { return "spectral"; }
+    virtual std::string defaultFont() const override { return "spectral"; }
 
     /// The ``"spectral-bold"`` font.  Overriding this method is what informs NanoGUI to use it.
-    virtual std::string defaultBoldFont() const { return "spectral-bold"; }
+    virtual std::string defaultBoldFont() const override { return "spectral-bold"; }
 
     CustomTheme(NVGcontext *ctx) : nanogui::Theme(ctx) {
         // two additional fonts loaded that are not defaults, but can be used
@@ -106,6 +106,7 @@ protected:
 
 class FontawesomeTheme : public nanogui::Theme {
 public:
+    /// The ``"fontawesome"`` icon font.  Overriding this method is what informs NanoGUI to use it.
     virtual std::string defaultIconFont() const override { return "fontawesome"; }
 
     FontawesomeTheme(NVGcontext *ctx) : nanogui::Theme(ctx) {
