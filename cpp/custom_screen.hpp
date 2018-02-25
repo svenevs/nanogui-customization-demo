@@ -1,20 +1,22 @@
-#include "CustomTheme.hpp"
-#include "GLTexture.hpp"
+#pragma once
+
+#include "custom_theme.hpp"
+#include "gl_texture.hpp"
 
 #include <nanogui/nanogui.h>
-
-#include <vector>
+#include <iostream>
 
 class CustomScreen : public nanogui::Screen {
 public:
     CustomScreen(const nanogui::Vector2i &size)
-        : nanogui::Screen(size, "Custom Font") {
+        : nanogui::Screen(size, "Customization Demo") {
 
         /* Important! before you can use the custom fonts, even if you are not
          * setting the theme of a widget directly, you need to instantiate one
          * so that the fonts are actually loaded!
          */
-        mCustomTheme = new MyTheme(mNVGContext);
+        mCustomTheme = new CustomTheme(mNVGContext);
+        mFontawesomeTheme = new FontawesomeTheme(mNVGContext);
 
         // load an image for creating the image view in makeCompareWindow
         GLTexture texture;
@@ -35,7 +37,7 @@ public:
         return false;
     }
 
-    nanogui::Window *makeCompareWindow(const std::string &title, bool customTheme) {
+    nanogui::Window *makeCompareWindow(const std::string &title, ThemeChoice themeChoice) {
         using namespace nanogui;
         Window *window = new Window(this, title);
 
@@ -45,8 +47,10 @@ public:
          * When you call setTheme after-the-fact, the same will occur -- calling
          * setTheme on a widget propagates that theme to all children.
          */
-        if (customTheme)
+        if (themeChoice == ThemeChoice::Custom)
             window->setTheme(mCustomTheme);
+        else if (themeChoice == ThemeChoice::Fontawesome)
+            window->setTheme(mFontawesomeTheme);
 
         /* The remainder of the code here is largely irrelevant, the setTheme is the
          * important part.  Everything added below exists as a testing suite to make
@@ -54,7 +58,7 @@ public:
          * font selections as defined by CustomTheme::defaultFont and
          * CustomTheme::defaultBoldFont overrides (see CustomTheme.hpp).
          */
-        window->setLayout(new nanogui::GroupLayout());
+        window->setLayout(new GroupLayout(15, 6, 6));
 
         /* test text box fonts */ {
             new Label(window, "Text Boxes");
@@ -71,7 +75,7 @@ public:
         }
 
         /* test ImageView fonts (needs callback, scroll up on image to see) */ {
-            new Label(window, "Image View");
+            new Label(window, "Image View (Mouse Over Image and Scroll Up)");
             // NOTE: there's only ever one image in imagesData!
             auto imageView = new ImageView(window, mImagesData[0].first.texture());
             imageView->setGridThreshold(20);
@@ -96,14 +100,68 @@ public:
             );
         }
 
+        /* Message dialogs */ {
+            new Label(window, "Message Dialogues");
+            auto *tools = new Widget(window);
+            tools->setLayout(new BoxLayout(Orientation::Horizontal,
+                                           Alignment::Middle, 0, 6));
+            auto *b = new Button(tools, "Info");
+            Theme *dialogTheme = nullptr;
+            if (themeChoice == ThemeChoice::Custom)
+                dialogTheme = mCustomTheme;
+            else if (themeChoice == ThemeChoice::Fontawesome)
+                dialogTheme = mFontawesomeTheme;
+            b->setCallback([this, dialogTheme] {
+                auto *dlg = new MessageDialog(
+                    this,
+                    MessageDialog::Type::Information,
+                    "Title",
+                    "This is an information message",
+                    "OK",
+                    "Cancel",
+                    false,
+                    dialogTheme
+                );
+                dlg->setCallback([](int result) { std::cout << "Dialog result: " << result << std::endl; });
+            });
+            b = new Button(tools, "Warn");
+            b->setCallback([this, dialogTheme] {
+                auto *dlg = new MessageDialog(
+                    this,
+                    MessageDialog::Type::Warning,
+                    "Title",
+                    "This is a warning message",
+                    "OK",
+                    "Cancel",
+                    false,
+                    dialogTheme
+                );
+                dlg->setCallback([](int result) { std::cout << "Dialog result: " << result << std::endl; });
+            });
+            b = new Button(tools, "Ask");
+            b->setCallback([this, dialogTheme] {
+                auto *dlg = new MessageDialog(
+                    this,
+                    MessageDialog::Type::Question,
+                    "Title",
+                    "This is a question message",
+                    "Yes",
+                    "No",
+                    true,
+                    dialogTheme
+                );
+                dlg->setCallback([](int result) { std::cout << "Dialog result: " << result << std::endl; });
+            });
+        }
+
         // TabWidget used to test TabHeader and others while keeping the size manageable
+        new Label(window, "Tab Widget");
         TabWidget* tabWidget = window->add<TabWidget>();
 
         /* test button and checkbox fonts */ {
             Widget *layer = tabWidget->createTab("Button Like");
             layer->setLayout(new GroupLayout());
 
-            new Label(layer, "Button Like");
             // regular buttons
             Button *button = new Button(layer, "PushButton");
             button = new Button(layer, "RadioButton 1");
@@ -113,33 +171,46 @@ public:
             button = new Button(layer, "ToggleButton");
             button->setFlags(Button::Flags::ToggleButton);
 
+            // combobox
+            auto *cb = new ComboBox(
+                layer, {"Combo box item 1", "Combo box item 2", "Combo box item 3"}
+            );
+            if (themeChoice != ThemeChoice::Default)
+                cb->setSide(Popup::Side::Left);
+
             // popup button
-            PopupButton *popupBtn = new PopupButton(layer, "Popup", ENTYPO_ICON_EXPORT);
+            int icon = ENTYPO_ICON_EXPORT;
+            if (themeChoice == ThemeChoice::Fontawesome)
+                icon = FONTAWESOME_ICON_SOLID_SHARE_SQUARE;
+            PopupButton *popupBtn = new PopupButton(layer, "Popup", icon);
             Popup *popup = popupBtn->popup();
             // making sure the popup button for the custom theme stays in bounds
-            if (customTheme)
+            if (themeChoice == ThemeChoice::Custom || themeChoice == ThemeChoice::Fontawesome)
                 popupBtn->setSide(Popup::Side::Left);
             popup->setLayout(new GroupLayout());
             new Label(popup, "Arbitrary widgets can be placed here");
             new CheckBox(popup, "A check box");
             // popup right
-            popupBtn = new PopupButton(popup, "Recursive popup", ENTYPO_ICON_FLASH);
+            icon = ENTYPO_ICON_FLASH;
+            if (themeChoice == ThemeChoice::Fontawesome)
+                icon = FONTAWESOME_ICON_SOLID_BOLT;
+            popupBtn = new PopupButton(popup, "Recursive popup", icon);
             Popup *popupRight = popupBtn->popup();
             popupRight->setLayout(new GroupLayout());
             new CheckBox(popupRight, "Another check box");
             // popup left
-            popupBtn = new PopupButton(popup, "Recursive popup", ENTYPO_ICON_FLASH);
+            popupBtn = new PopupButton(popup, "Recursive popup", icon);
             popupBtn->setSide(Popup::Side::Left);
             Popup *popupLeft = popupBtn->popup();
             popupLeft->setLayout(new GroupLayout());
-
-            // checkbox
             new CheckBox(popupLeft, "Another check box");
-            auto *cb = new CheckBox(layer, "A CheckBox");
+
+            // checkbox (top level)
+            new CheckBox(layer, "A CheckBox");
         }
 
         /* test the graph widget fonts */ {
-            Widget *layer = tabWidget->createTab("Function Graph");
+            Widget *layer = tabWidget->createTab("Graph");
             layer->setLayout(new GroupLayout());
 
             // Same as nanogui src/example1.cpp
@@ -166,7 +237,7 @@ public:
                 std::string tabName = "Dynamic " + std::to_string(counter);
                 Widget* layerDyn = tabWidget->createTab(index, tabName);
                 layerDyn->setLayout(new GroupLayout());
-                layerDyn->add<Label>("Function graph widget", "sans-bold");
+                layerDyn->add<Label>("Function graph widget", "spectrum-bold");
                 Graph *graphDyn = layerDyn->add<Graph>("Dynamic function");
 
                 graphDyn->setHeader("E = 2.35e-3");
@@ -194,51 +265,6 @@ public:
 protected:
     using imagesDataType = std::vector<std::pair<GLTexture, GLTexture::handleType>>;
     imagesDataType mImagesData;
-    MyTheme *mCustomTheme = nullptr;
+    CustomTheme *mCustomTheme = nullptr;
+    FontawesomeTheme *mFontawesomeTheme = nullptr;
 };
-
-int main(void) {
-    nanogui::init();
-
-    {
-        using namespace nanogui;
-
-        CustomScreen *screen = new CustomScreen({800, 800});
-
-        // manual demonstration
-        Window *window = new Window(screen, "Manual Labels");
-        window->setLayout(new GroupLayout());
-        Label *label = new Label(window, "First", "spirax");
-        label->setFontSize(28);
-        label = new Label(window, "Second", "spirax");
-        label->setFontSize(28);
-        label = new Label(window, "Third", "spirax");
-        label->setFontSize(28);
-        // add some with the membra font, make sure setFont works too
-        label = new Label(window, "First");
-        label->setFont("membra");
-        label = new Label(window, "Second");
-        label->setFont("membra");
-        label = new Label(window, "Third");
-        label->setFont("membra");
-
-        // make one with the default theme
-        window = screen->makeCompareWindow("Default Theme", false);
-        window->setPosition({150, 0});
-
-        // make one with the custom theme
-        window = screen->makeCompareWindow("Custom Theme", true);
-        window->setPosition({475, 0});
-
-        screen->setVisible(true);
-        screen->performLayout();
-
-        nanogui::mainloop();
-
-    }
-
-    nanogui::shutdown();
-
-
-    return 0;
-}

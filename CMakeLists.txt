@@ -2,9 +2,9 @@ project("nanogui-custom-font-demo")
 cmake_minimum_required(VERSION 3.1.3 FATAL_ERROR)
 
 # CMAKE_CXX_STANDARD introduced in v3.1.3
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD          11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS        OFF)
 
 # Doing this makes testing easier, NanoGUI example* will all go to ./bin/
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
@@ -16,6 +16,14 @@ list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spira
 list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/membra/membra.ttf")
 list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spectral/SpectralSC-Regular.ttf")
 list(APPEND NANOGUI_EXTRA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/spectral/SpectralSC-Bold.ttf")
+
+# Setup the custom icon font for NanoGUI, the requirements are that these files are
+# all in the same directory:
+#
+# - some/path/fontawesome.ttf           <- The font to embed.
+# - some/path/fontawesome.h             <- C++ header that #define's the constants.
+# - some/path/constants_fontawesome.cpp <- Python bindings.
+list(APPEND NANOGUI_EXTRA_ICON_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/fontawesome/fontawesome.ttf")
 
 # NOTE: see http://nanogui.readthedocs.io/en/latest/compilation.html#default-configurations
 #       these are slightly different, as this is a testing repo.
@@ -35,16 +43,27 @@ add_definitions(${NANOGUI_EXTRA_DEFS})
 
 # On top of adding the path to nanogui/include, you may need extras
 include_directories(ext/nanogui/include ${NANOGUI_EXTRA_INCS})
-add_executable(
-  exampleCustomization
-  CustomTheme.hpp
-  GLTexture.hpp
-  exampleCustomization.cpp
+add_executable(example_customization
+  cpp/custom_screen.hpp
+  cpp/custom_theme.hpp
+  cpp/gl_texture.hpp
+  cpp/example_customization.cpp
 )
 
 # Lastly, additional libraries may have been built for you.  In addition to linking
 # against NanoGUI, we need to link against those as well.
-target_link_libraries(exampleCustomization nanogui ${NANOGUI_EXTRA_LIBS})
+target_link_libraries(example_customization nanogui ${NANOGUI_EXTRA_LIBS})
+
+add_executable(example_custom_icon_font
+  cpp/custom_screen.hpp
+  cpp/custom_theme.hpp
+  cpp/gl_texture.hpp
+  cpp/example_custom_icon_font.cpp
+)
+target_link_libraries(example_custom_icon_font nanogui ${NANOGUI_EXTRA_LIBS})
+
+add_executable(example_fontawesome cpp/example_fontawesome.cpp)
+target_link_libraries(example_fontawesome nanogui ${NANOGUI_EXTRA_LIBS})
 
 ########################################################################################
 # Everything below here is "advanced", and should not be required for your own project #
@@ -64,8 +83,8 @@ endforeach()
 set(TEST_PYTHON_DIR "${CMAKE_CURRENT_BINARY_DIR}/python")
 file(MAKE_DIRECTORY "${TEST_PYTHON_DIR}")
 add_custom_command(
-  TARGET exampleCustomization # nanogui-python is a dependency, you cannot add a custom
-  POST_BUILD                  # command for a target created in a different CMakeLists.txt
+  TARGET example_customization # nanogui-python is a dependency, you cannot add a custom
+  POST_BUILD                   # command for a target created in a different CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:nanogui-python> "${TEST_PYTHON_DIR}"
 )
 list(APPEND NANOGUI_PYTHON_EXAMPLES "example2.py;example3.py;example4.py;example_icons.py")
@@ -86,3 +105,16 @@ string(
   "${NANOGUI_PY_EXAMPLE_1_TEXT}"
 )
 file(WRITE "${TEST_PYTHON_DIR}/example1.py" "${NANOGUI_PY_EXAMPLE_1_TEXT_FIXED}")
+
+# Copy the example customization python demo files
+list(APPEND CUSTOM_PYTHON_TESTS example_customization.py)
+list(APPEND CUSTOM_PYTHON_TESTS example_fontawesome.py)
+list(APPEND CUSTOM_PYTHON_TESTS example_custom_icon_font.py)
+list(APPEND CUSTOM_PYTHON_TESTS custom_screen.py)
+list(APPEND CUSTOM_PYTHON_TESTS custom_theme.py)
+foreach(py ${CUSTOM_PYTHON_TESTS})
+  file(
+    COPY "${CMAKE_CURRENT_SOURCE_DIR}/python/${py}"
+    DESTINATION "${TEST_PYTHON_DIR}"
+  )
+endforeach()
