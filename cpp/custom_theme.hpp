@@ -2,8 +2,8 @@
 
 #include <nanogui/theme.h>
 #include <nanogui/entypo.h>
-#include <nanogui/resources.h> // provides nanogui::createFontMem
-#include <nanogui/fontawesome.h>
+#include <nanogui/resources.h>  // provides nanogui::createFontMem
+#include <nanogui/fontawesome.h>// automatically copied for you by NanoGUI
 
 enum class ThemeChoice {
     Default = 0,///< The default NanoGUI Theme
@@ -114,7 +114,7 @@ public:
         if (mFontAwesomeFont == -1)
             throw std::runtime_error("Could not load the fontawesome font!");
 
-        // Since our dfault icon font is "fontawesome", we *must* override the
+        // Since our default icon font is "fontawesome", we *must* override the
         // icon defaults for various widgets!
         mCheckBoxIcon             = FONTAWESOME_ICON_SOLID_CHECK;
         mCheckBoxIconExtraScale   = 0.7f;

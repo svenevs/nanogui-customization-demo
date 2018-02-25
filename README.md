@@ -28,6 +28,7 @@ to load an entirely different icon font and use it as the default for NanoGUI wi
     - [Embedding Custom Icon Fonts with NanoGUI](#embedding-custom-icon-fonts-with-nanogui)
         - [Generating a Custom Icon Font](#generating-a-custom-icon-font)
         - [Inform NanoGUI of Custom Icon Fonts](#inform-nanogui-of-custom-icon-fonts)
+        - [Use the Custom Icon Fonts](#use-the-custom-icon-fonts)
     - [VERY Important Consideration for all Custom Fonts](#very-important-consideration-for-all-custom-fonts)
 - [License](#license)
 
@@ -378,6 +379,105 @@ See also: [VERY Important Consideration for all Custom Fonts](#very-important-co
 ## Embedding Custom Icon Fonts with NanoGUI
 
 ### Generating a Custom Icon Font
+
+Generation of a custom icon font is somewhat challenging, but we have prepared a mostly
+automatic
+[icon font generation repository](https://github.com/svenevs/nanogui-custom-font-generator)
+for you to use.  The requirement is that you have access to the `.svg` images for your
+desired icon font.
+
+The [`resources/fontawesome`](resources/fontawesome) files were generated using that
+utility repo, which generated from the raw `.svg` images:
+
+- `fontawesome.ttf`: the true type font file that NanoGUI will embed.
+- `fontawesome.h`: the C++ `#define` directives that index into the constants defined
+  by `fontawesome.ttf`.  These are required in order for you to actually be able to use
+  a specific icon.
+- `constants_fontawesome.cpp`: the python bindings so the font can be used in python.
+
+If you do not have access to the `.svg` icons (e.g., you only have a `.ttf` file), you
+will have to spend significantly more time figuring out how to create the C++ header
+file (and python bindings, if you want them).  You may want to look at
+[this website](http://stevehanov.ca/blog/index.php?id=143) for help on that.
+
+### Inform NanoGUI of Custom Icon Fonts
+
+Working with the example `fontawesome` font, it is saved in this repository as
+
+```
+resources/
+    fontawesome/
+        fontawesome.ttf
+        fontawesome.h
+        constants_fontawesome.cpp
+```
+
+These files **must** all be in the same directory, but if you do not set
+`NANOGUI_BUILD_PYTHON` then you can omit the `constants_fontawesome.cpp` file if you
+so choose.  All you do is specify to NanoGUI where this custom icon font file is, and
+NanoGUI in turn looks to make sure that the header file and python binding is present:
+
+```cmake
+# Setup the custom icon font for NanoGUI, the requirements are that these files are
+# all in the same directory:
+#
+# - some/path/fontawesome.ttf           <- The font to embed.
+# - some/path/fontawesome.h             <- C++ header that #define's the constants.
+# - some/path/constants_fontawesome.cpp <- Python bindings.
+list(APPEND NANOGUI_EXTRA_ICON_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/fontawesome/fontawesome.ttf")
+```
+
+**WARNING**: this is **not** the same as `NANOGUI_EXTRA_RESOURCES`, this is
+`NANOGUI_EXTRA_ICON_RESOURCES`!
+
+### Use the Custom Icon Fonts
+
+The process here is nearly identical to [Use the Custom Fonts](#use-the-custom-fonts),
+the full `FontawesomeTheme` class is available in
+[`cpp/custom_theme.hpp`](cpp/custom_theme.hpp):
+
+```cpp
+#include <nanogui/theme.h>
+#include <nanogui/resources.h>  // provides nanogui::createFontMem
+#include <nanogui/fontawesome.h>// automatically copied for you by NanoGUI
+
+class FontawesomeTheme : public nanogui::Theme {
+public:
+    /// The ``"fontawesome"`` icon font.  Overriding this method is what informs NanoGUI to use it.
+    virtual std::string defaultIconFont() const override { return "fontawesome"; }
+
+    FontawesomeTheme(NVGcontext *ctx) : nanogui::Theme(ctx) {
+        mFontAwesomeFont = nanogui::createFontMem(ctx, "fontawesome", "fontawesome.ttf");
+        if (mFontAwesomeFont == -1)
+            throw std::runtime_error("Could not load the fontawesome font!");
+
+        // Since our default icon font is "fontawesome", we *must* override the
+        // icon defaults for various widgets!
+        mCheckBoxIcon             = FONTAWESOME_ICON_SOLID_CHECK;
+        mCheckBoxIconExtraScale   = 0.7f;
+        // ... set the remaining icons ...
+    }
+
+    ~FontawesomeTheme() { }
+
+protected:
+    int mFontAwesomeFont = -1;
+};
+```
+
+The key points here:
+
+1. Recalling that `fontawesome.ttf` and `fontawesome.h` had to be in the same directory,
+   note that we do `#include <nanogui/fontawesome.h>`.  In your CMake setup, you do
+   **not** need to `include_directories(resources/fontawesome)`.  This header file is
+   copied to a destination that is included in `NANOGUI_EXTRA_INCS`.
+2. Assuming you want to use this icon font over the NanoGUI defaults `"icons"` (from
+   Entypo+), override the `nanogui::Theme` virtual method `defaultIconFont()`.
+3. By overriding `defaultIconFont()`, you **must** set all of the `nanogui::Theme`
+   default icons.  If you do not, you will still get the original Entypo+ _constants_
+   being used, which will map to undefined / erroneous fontawesome icons.
+
+See also: [VERY Important Consideration for all Custom Fonts](#very-important-consideration-for-all-custom-fonts).
 
 ## VERY Important Consideration for all Custom Fonts
 
