@@ -106,8 +106,8 @@ $ ./bin/example_customization
 $ ./bin/example_custom_icon_font
 ```
 
-That is, do **not** `cd bin` and run `./bin/example_customization` (the icons will not
-be found because the path to the loaded images is hard-coded).
+That is, do **not** `cd bin` and run `./example_customization` (the icons will not be
+found because the path to the loaded images is hard-coded).
 
 Similarly, the python executables all get copied for you.  From the `build/` directory,
 there should also be a `python` directory:
