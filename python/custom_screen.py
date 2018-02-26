@@ -1,3 +1,11 @@
+################################################################################
+# This file is part of an example repository for NanoGUI.  Use of this source  #
+# code is governed by a BSD-style license that can be found in the             #
+# LICENSE file:                                                                #
+#                                                                              #
+# https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE    #
+################################################################################
+
 # For the pixel info callback, we need to have the host image loaded
 try:
     from PIL import Image

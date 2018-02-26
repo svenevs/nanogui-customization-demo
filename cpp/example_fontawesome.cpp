@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * This file is part of an example repository for NanoGUI.  Use of this source *
+ * code is governed by a BSD-style license that can be found in the            *
+ * LICENSE file:                                                               *
+ *                                                                             *
+ * https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE   *
+ ******************************************************************************/
+
 /* Developer note: need to make a change to this file?
  * Please raise an Issue on GitHub describing what needs to change.  This file
  * was generated, so the scripts that generated it need to update as well.

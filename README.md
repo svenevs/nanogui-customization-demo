@@ -537,12 +537,34 @@ All code available in this repository was designed for use with [NanoGUI][nanogu
 so it inherits NanoGUI's BSD 3-clause license.  This does **not** apply to any of the
 fonts hosted in the [`resources`](resources/) folder.
 
+More specifically, the majority of the code used here is just adapted from NanoGUI's
+[`src/example1.cpp`](https://github.com/wjakob/nanogui/blob/master/src/example1.cpp).
+
+Since that code is not mine to claim, the most reasonable solution was to essentially
+provide the same style license.  **HOWEVER**, given that the goal of this repository
+is to simply enable you to customize NanoGUI as you see fit, **all code blocks presented
+in this `README.md`are CC0**.  AKA if you just want to customize colors or add custom
+fonts, you should not feel the need to cite this repository.
+
+To cover all bases here, where python is concerned, you literally just remove the
+semicolons, replace `this` with `self`, and use `window.setTheme` rather than
+`window->setTheme`.  The only thing that is not available in python is
+`self.mNVGContext`, just use `self.nvgContext()` instead as shown in the example code.
+
 ## Font Awesome 5 Free
 
 The generated [Font Awesome 5 Free][fontawesome] `fontawesome.ttf` font was generated
 by using their (graciously hosted) raw SVG images.  So
 [their license](resources/fontawesome/LICENSE) indicates that this is governed by
 CC-BY-SA 4.0.
+
+**NOTE**: if you want to use the existing generated
+[`resources/fontawesome`](resources/fontawesome) utilities in your own repository, you
+are more than welcome to _without_ attribution to this repository.  The license
+information is already at the top of `fontawesome.h` and `constants_fontawesome.cpp`.
+What you will need to do is provide attribution (e.g., in your `README.md`) clarifying
+that the generated `fontawesome.ttf` is CC-BY-SA 4.0 as per their license.  It would
+also be a good idea to track their `LICENSE` as done here as well.
 
 ## Membra Font
 
