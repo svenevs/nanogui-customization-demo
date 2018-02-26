@@ -23,7 +23,7 @@ int main(void) {
         Window *window = new Window(screen, "Manual Labels");
         window->setLayout(new GroupLayout());
 
-        const std::vector<const std::string> pangram = {
+        const std::vector<std::string> pangram = {
             "The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog."
         };
         // add the spirax font
