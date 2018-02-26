@@ -1,4 +1,4 @@
-project("nanogui-custom-font-demo")
+project("nanogui-customization-demo")
 cmake_minimum_required(VERSION 3.1.3 FATAL_ERROR)
 
 # CMAKE_CXX_STANDARD introduced in v3.1.3
