@@ -26,7 +26,7 @@ int main(void) {
         new Label(window, "Awesome");
 
         // just some similar icons to compare with
-        const std::vector<const std::pair<int, int>> icons = {
+        const std::vector<std::pair<int, int>> icons = {
             {        ENTYPO_ICON_INFO_WITH_CIRCLE,    FONTAWESOME_ICON_SOLID_INFO_CIRCLE},
             {                    ENTYPO_ICON_HOME,           FONTAWESOME_ICON_SOLID_HOME},
             {              ENTYPO_ICON_LIGHT_BULB,            FONTAWESOME_ICON_LIGHTBULB},

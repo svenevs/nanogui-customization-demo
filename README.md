@@ -1,5 +1,8 @@
 # nanogui-customization-demo
 
+[![Build Status Travis](https://travis-ci.org/svenevs/nanogui-customization-demo.svg?branch=master)](https://travis-ci.org/svenevs/nanogui-customization-demo)
+[![Build status Appveyor](https://ci.appveyor.com/api/projects/status/5sxk8hvkcq0xgm5x?svg=true)](https://ci.appveyor.com/project/svenevs/nanogui-customization-demo)
+
 Tutorial repository for customizing the [NanoGUI][nanogui] theme, and embedding custom
 fonts and icon fonts.
 
