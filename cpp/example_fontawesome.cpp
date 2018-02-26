@@ -1,11 +1,3 @@
-/*******************************************************************************
- * This file is part of an example repository for NanoGUI.  Use of this source *
- * code is governed by a BSD-style license that can be found in the            *
- * LICENSE file:                                                               *
- *                                                                             *
- * https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE   *
- ******************************************************************************/
-
 /* Developer note: need to make a change to this file?
  * Please raise an Issue on GitHub describing what needs to change.  This file
  * was generated, so the scripts that generated it need to update as well.
@@ -58,11 +50,14 @@ public:
     FontawesomeScreen(const Vector2i &size, const std::string &title, bool resizable)
         : nanogui::Screen(size, title, resizable) {
 
-        auto *theme = new FontawesomeTheme(this->mNVGContext);
-        this->setTheme(theme);
+        mFontawesomeTheme = new FontawesomeTheme(this->mNVGContext);
+        this->setTheme(mFontawesomeTheme);
     }
 
     virtual ~FontawesomeScreen() { /* nothing to free */ }
+
+protected:
+    nanogui::ref<FontawesomeTheme> mFontawesomeTheme;
 };
 
 /* Return false essentially makes it not possible to actually edit this text

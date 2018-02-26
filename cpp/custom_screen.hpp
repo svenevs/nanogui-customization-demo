@@ -272,6 +272,6 @@ public:
 protected:
     using imagesDataType = std::vector<std::pair<GLTexture, GLTexture::handleType>>;
     imagesDataType mImagesData;
-    CustomTheme *mCustomTheme = nullptr;
-    FontawesomeTheme *mFontawesomeTheme = nullptr;
+    nanogui::ref<CustomTheme> mCustomTheme = nullptr;
+    nanogui::ref<FontawesomeTheme> mFontawesomeTheme = nullptr;
 };
