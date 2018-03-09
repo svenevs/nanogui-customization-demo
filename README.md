@@ -73,7 +73,7 @@ build/
         ...
         custom_theme_and_fonts.py
         custom_icon_theme_and_fonts.py
-        theme_buildter.py
+        theme_builder.py
     icons/
         icon1.png ...
 ```

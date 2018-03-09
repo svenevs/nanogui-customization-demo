@@ -20,11 +20,6 @@ enum class ThemeChoice {
     Fontawesome ///< The 'FontawesomeTheme' class
 };
 
-
-#pragma once
-
-#include <nanogui/theme.h>
-
 /*
 The JSON for this class::
 
@@ -96,8 +91,7 @@ public:
         mSpiraxFont = nanogui::createFontMem(ctx, "spirax", "Spirax-Regular.ttf");
         mMembraFont = nanogui::createFontMem(ctx, "membra", "membra.ttf");
 
-        // not forcing failure if mBilboFont is not loaded so that if Freetype was not
-        // found the application can still run
+        // -1 means font could not be loaded
         if (mSpiraxFont == -1 || mMembraFont == -1)
             throw std::runtime_error("Could not load the `spirax` or `membra` fonts!");
 
