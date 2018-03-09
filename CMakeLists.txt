@@ -97,8 +97,8 @@ endforeach()
 set(TEST_PYTHON_DIR "${CMAKE_CURRENT_BINARY_DIR}/python")
 file(MAKE_DIRECTORY "${TEST_PYTHON_DIR}")
 add_custom_command(
-  TARGET example_customization # nanogui-python is a dependency, you cannot add a custom
-  POST_BUILD                   # command for a target created in a different CMakeLists.txt
+  TARGET example_fontawesome # nanogui-python is a dependency, you cannot add a custom
+  POST_BUILD                 # command for a target created in a different CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:nanogui-python> "${TEST_PYTHON_DIR}"
 )
 list(APPEND NANOGUI_PYTHON_EXAMPLES "example2.py;example3.py;example4.py;example_icons.py")

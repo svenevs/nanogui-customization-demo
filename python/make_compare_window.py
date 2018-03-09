@@ -187,7 +187,10 @@ def makeCompareWindow(screen, title, themeChoice):
     cp = nanogui.ColorPicker(layer, nanogui.Color(0.28573, 0.56702, 0.25104, 1.0))
     if isinstance(themeChoice, nanogui.Theme) or themeChoice != ThemeChoice.Default:
         cp.setSide(nanogui.Popup.Side.Left)
-    cp.setFinalCallback(lambda c: print("Color: {0}, {1}, {2}, {3}".format(c[:])))
+
+    def cp_cb(col):
+        print("Color: {0}, {1}, {2}, {3}".format(col.r, col.g, col.b, col.w))
+    cp.setFinalCallback(cp_cb)
 
     # combobox
     cb = nanogui.ComboBox(
