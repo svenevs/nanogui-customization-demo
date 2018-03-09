@@ -146,6 +146,11 @@ When you are satisfied with the new colors and sizes, the `C++` and `Python` but
 will populate your clipboard with a full class definition using the customizations you
 have created.  Paste that into a source file to use in your project.
 
+You can also use the `JSON` button to populate the clipboard with data as a temporary
+save feature.  If you make changes that you do not like, simply
+`Load JSON from Clipboard` to undo those changes.  Each C++ and Python class generated
+includes a comment with the full JSON to allow for future tweaks.
+
 **Note**: the theme builder application does not support customization of icons, nor
 customization of default fonts.  See the source code for the above two applications for
 how to customize default fonts / default icons etc.
