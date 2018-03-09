@@ -15,6 +15,8 @@ class ThemeChoice:
 
 class CustomTheme(nanogui.Theme):
     '''
+    Colors loosely inspired by Solarized Light: http://ethanschoonover.com/solarized
+
     The JSON for this class::
 
         {

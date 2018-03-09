@@ -55,26 +55,26 @@ add_definitions(${NANOGUI_EXTRA_DEFS})
 
 # On top of adding the path to nanogui/include, you may need extras
 include_directories(ext/nanogui/include ${NANOGUI_EXTRA_INCS})
-add_executable(example_customization
+add_executable(custom_theme_and_fonts
   cpp/custom_screen.hpp
   cpp/custom_theme.hpp
   cpp/gl_texture.hpp
   cpp/make_compare_window.hpp
-  cpp/example_customization.cpp
+  cpp/custom_theme_and_fonts.cpp
 )
 
 # Lastly, additional libraries may have been built for you.  In addition to linking
 # against NanoGUI, we need to link against those as well.
-target_link_libraries(example_customization nanogui ${NANOGUI_EXTRA_LIBS})
+target_link_libraries(custom_theme_and_fonts nanogui ${NANOGUI_EXTRA_LIBS})
 
-add_executable(example_custom_icon_font
+add_executable(custom_icon_theme_and_fonts
   cpp/custom_screen.hpp
   cpp/custom_theme.hpp
   cpp/gl_texture.hpp
   cpp/make_compare_window.hpp
-  cpp/example_custom_icon_font.cpp
+  cpp/custom_icon_theme_and_fonts.cpp
 )
-target_link_libraries(example_custom_icon_font nanogui ${NANOGUI_EXTRA_LIBS})
+target_link_libraries(custom_icon_theme_and_fonts nanogui ${NANOGUI_EXTRA_LIBS})
 
 add_executable(example_fontawesome cpp/example_fontawesome.cpp)
 target_link_libraries(example_fontawesome nanogui ${NANOGUI_EXTRA_LIBS})
@@ -121,9 +121,9 @@ string(
 file(WRITE "${TEST_PYTHON_DIR}/example1.py" "${NANOGUI_PY_EXAMPLE_1_TEXT_FIXED}")
 
 # Copy the example customization python demo files
-list(APPEND CUSTOM_PYTHON_TESTS example_customization.py)
+list(APPEND CUSTOM_PYTHON_TESTS custom_theme_and_fonts.py)
 list(APPEND CUSTOM_PYTHON_TESTS example_fontawesome.py)
-list(APPEND CUSTOM_PYTHON_TESTS example_custom_icon_font.py)
+list(APPEND CUSTOM_PYTHON_TESTS custom_icon_theme_and_fonts.py)
 list(APPEND CUSTOM_PYTHON_TESTS custom_screen.py)
 list(APPEND CUSTOM_PYTHON_TESTS custom_theme.py)
 list(APPEND CUSTOM_PYTHON_TESTS make_compare_window.py)

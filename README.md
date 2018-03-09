@@ -104,15 +104,51 @@ $ python3 theme_builder.py
 > for more information!
 
 The `bin/custom_theme_and_fonts` and `python/custom_theme_and_fonts.py` applications
-rely on the "SolarizedLightTheme" (defined in
-[`cpp/custom_theme.hpp`](cpp/custom_theme.hpp) /
+use the `CustomTheme` class (defined in [`cpp/custom_theme.hpp`](cpp/custom_theme.hpp) /
 [`python/custom_theme.py`](python/custom_theme.py)).  It shows how to load additional
 font faces, set them as the theme defaults, and customize some of the default icons.
 
 ## Custom Icon Theme and Fonts
 
+<p align="center">
+  <img alt="custom icon theme and fonts" src="https://github.com/svenevs/nanogui-customization-demo/blob/master/resources/screens/custom_icon_theme_and_fonts.png" />
+</p>
+
+> 👀 See the [documentation on customization](http://nanogui.readthedocs.io/en/latest/usage.html#python)
+> for more information!
+
+The `bin/custom_icon_theme_and_fonts` and `python/custom_icon_theme_and_fonts.py`
+applications use the `FontawesomeTheme` class (defined in
+[`cpp/custom_theme.hpp`](cpp/custom_theme.hpp) /
+[`python/custom_theme.py`](python/custom_theme.py)).  It shows how to load additional
+icon font faces, as well as change the remaining icon related aspects of
+`nanogui::Theme`.
+
 ## Theme Builder
 
+<p align="center">
+  <img alt="theme builder" src="https://github.com/svenevs/nanogui-customization-demo/blob/master/resources/screens/theme_builder_600.gif" />
+</p>
+
+From the `build` directory:
+
+```console
+$ cd python/
+$ python3 theme_builder.py
+```
+
+The application helps visualize what colors affect which widgets.  For color
+manipulations, use `<shift + left click>` to "mark" a color, and `<ctrl + left click>`
+to "paste" the currently marked color.  This can be useful in conjunction with the
+"Darken by 5%" and "Lighten by 5%" for differentiating in and out of focus colors.
+
+When you are satisfied with the new colors and sizes, the `C++` and `Python` buttons
+will populate your clipboard with a full class definition using the customizations you
+have created.  Paste that into a source file to use in your project.
+
+**Note**: the theme builder application does not support customization of icons, nor
+customization of default fonts.  See the source code for the above two applications for
+how to customize default fonts / default icons etc.
 
 # License
 
