@@ -100,7 +100,7 @@ $ python3 theme_builder.py
   <img alt="custom theme and fonts" src="https://github.com/svenevs/nanogui-customization-demo/blob/master/resources/screens/custom_theme_and_fonts.png" />
 </p>
 
-> 👀 See the [documentation on customization](http://nanogui.readthedocs.io/en/latest/usage.html#python)
+> 👀 See the [documentation on customization](http://nanogui.readthedocs.io/en/latest/usage.html#customization)
 > for more information!
 
 The `bin/custom_theme_and_fonts` and `python/custom_theme_and_fonts.py` applications
