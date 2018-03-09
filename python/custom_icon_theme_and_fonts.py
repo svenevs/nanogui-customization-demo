@@ -1,10 +1,8 @@
-################################################################################
-# This file is part of an example repository for NanoGUI.  Use of this source  #
-# code is governed by a BSD-style license that can be found in the             #
-# LICENSE file:                                                                #
-#                                                                              #
-# https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE    #
-################################################################################
+########################################################################################
+# This file is licensed under CC0:                                                     #
+#                                                                                      #
+#      https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE       #
+########################################################################################
 
 import gc
 import nanogui
@@ -15,6 +13,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from custom_screen import CustomScreen
 from custom_theme import ThemeChoice
+from make_compare_window import makeCompareWindow
 
 
 if __name__ == "__main__":
@@ -70,11 +69,11 @@ if __name__ == "__main__":
     window.setFixedWidth(125)
 
     # make one with the default theme
-    window = screen.makeCompareWindow("Default Theme", ThemeChoice.Default)
+    window = makeCompareWindow(screen, "Default Theme", ThemeChoice.Default)
     window.setPosition((150, 0))
 
     # make one with the custom theme
-    window = screen.makeCompareWindow("Fontawesome Icon Theme", ThemeChoice.Fontawesome)
+    window = makeCompareWindow(screen, "Fontawesome Icon Theme", ThemeChoice.Fontawesome)
     window.setPosition((475, 0))
 
     screen.performLayout()

@@ -24,50 +24,51 @@
  *                                                                                     *
  * For more information, please refer to <http://unlicense.org>                        *
  **************************************************************************************/
-#pragma once
+#include "make_compare_window.hpp" // includes custom_screen and custom_theme
 
-#include "custom_theme.hpp"
-#include "gl_texture.hpp"
+#include <nanogui/nanogui.h>
 
-#include <nanogui/screen.h>
+#include <vector>
 
-class CustomScreen : public nanogui::Screen {
-public:
-    CustomScreen(const nanogui::Vector2i &size)
-        : nanogui::Screen(size, "NanoGUI Customization Demo") {
+int main(void) {
+    nanogui::init();
 
-        /* Important! before you can use the custom fonts, even if you are not
-         * setting the theme of a widget directly, you need to instantiate one
-         * so that the fonts are actually loaded.  Alternatively, load the
-         * custom font you want here in the constructor.  You would do this
-         * instead if you don't desire to change the default fonts, but just
-         * want a specific font face available to set for selected widgets.
-         */
-        mCustomTheme = new CustomTheme(mNVGContext);
-        mFontawesomeTheme = new FontawesomeTheme(mNVGContext);
+    {
+        using namespace nanogui;
 
-        // load an image for creating the image view in makeCompareWindow,
-        // loadTexture() defined in gl_texture.hpp
-        loadTexture("./icons/icon1.png", mImagesData);
+        CustomScreen *screen = new CustomScreen({800, 900});
+
+        // manual demonstration
+        Window *window = new Window(screen, "Manual Labels");
+        window->setLayout(new GroupLayout());
+        window->setFixedWidth(150);
+
+        auto add_pangram = [window](const std::string &font, int fontSize) {
+            std::string pangram = "The quick brown fox jumps over the lazy dog.";
+            auto *l = new Label(window, pangram, font, fontSize);
+            l->setFixedWidth(110);
+        };
+
+        add_pangram("spirax", 33);
+        add_pangram("membra", 23);
+
+        // make one with the default theme
+        window = makeCompareWindow(screen, "Default Theme", ThemeChoice::Default);
+        window->setPosition({150, 0});
+
+        // make one with the custom theme
+        window = makeCompareWindow(screen, "Custom Theme", ThemeChoice::Custom);
+        window->setPosition({475, 0});
+
+        screen->setVisible(true);
+        screen->performLayout();
+
+        nanogui::mainloop();
+
     }
 
-    /// Allow <ESCAPE> to close application.
-    bool keyboardEvent(int key, int scancode, int action, int modifiers) override {
-        if (Screen::keyboardEvent(key, scancode, action, modifiers))
-            return true;
+    nanogui::shutdown();
 
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-            setVisible(false);
-            return true;
-        }
 
-        return false;
-    }
-
-    // leaving these public so that makeCompareWindow can access them, typically you
-    // would want to mark things like this as protected...
-    using imagesDataType = std::vector<std::pair<GLTexture, GLTexture::handleType>>;
-    imagesDataType mImagesData;
-    nanogui::ref<CustomTheme> mCustomTheme = nullptr;
-    nanogui::ref<FontawesomeTheme> mFontawesomeTheme = nullptr;
-};
+    return 0;
+}

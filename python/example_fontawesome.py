@@ -1,10 +1,8 @@
-################################################################################
-# This file is part of an example repository for NanoGUI.  Use of this source  #
-# code is governed by a BSD-style license that can be found in the             #
-# LICENSE file:                                                                #
-#                                                                              #
-# https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE    #
-################################################################################
+########################################################################################
+# This file is licensed under CC0:                                                     #
+#                                                                                      #
+#      https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE       #
+########################################################################################
 
 # Developer note: need to make a change to this file?
 # Please raise an Issue on GitHub describing what needs to change.  This file
@@ -47,11 +45,37 @@ class FontawesomeTheme(nanogui.Theme):
         # self.mTextBoxIconExtraScale    = self.defaultTextBoxIconExtraScale()
 
 
-# Return false essentially makes it not possible to actually edit this text
-# box, but keeping it editable=true allows selection for copy-paste.  If the
-# text box is not editable, then the user cannot highlight it.
-def textbox_callback(val):
-    return False
+class EscapeScreen(nanogui.Screen):
+    def __init__(self, size, title, resizable):
+        super(EscapeScreen, self).__init__(size, title, resizable)
+
+    # allow <ESCAPE> to exit
+    def keyboardEvent(self, key, scancode, action, modifiers):
+        if key == nanogui.glfw.KEY_ESCAPE and modifiers == 0:
+            self.setVisible(False)
+            return True
+
+        return super(EscapeScreen, self).keyboardEvent(key, scancode, action, modifiers)
+
+
+class IconBox(nanogui.Widget):
+    def __init__(self, parent, name, icon, width):
+        super(IconBox, self).__init__(parent)
+
+        self.setLayout(nanogui.BoxLayout(nanogui.Orientation.Horizontal))
+
+        b = nanogui.Button(self, "", icon)
+        b.setFixedWidth(40)
+
+        text = nanogui.TextBox(self, name)
+        text.setDefaultValue(name)
+        text.setEditable(True)
+        # Return false essentially makes it not possible to actually edit this text
+        # box, but keeping it editable=true allows selection for copy-paste.  If the
+        # text box is not editable, then the user cannot highlight it.
+        text.setCallback(lambda x: False)
+        text.setFont("mono-bold")
+        text.setFixedWidth(width - 40)
 
 
 if __name__ == "__main__":
@@ -62,7 +86,7 @@ if __name__ == "__main__":
     height     = 800
 
     # create a fixed size screen with one window
-    screen = Screen((width, height), "NanoGUI Fontawesome Icons", False)
+    screen = EscapeScreen((width, height), "NanoGUI Fontawesome Icons", False)
 
     # NOTE: if doing a custom screen derived class, for some reason if you
     #       load a custom theme object and call setTheme in the constructor
@@ -93,16 +117,7 @@ if __name__ == "__main__":
     # of the icons -- see cpp example for alternative...
     for key in fontawesome.__dict__.keys():
         if key.startswith("ICON_"):
-            wrapper_icon = Widget(wrapper)
-            wrapper_icon.setLayout(BoxLayout(Orientation.Horizontal))
-            b = Button(wrapper_icon, "", fontawesome.__dict__[key])
-            b.setFixedWidth(40)
-            text = TextBox(wrapper_icon, "fontawesome.{0}".format(key))
-            text.setDefaultValue("fontawesome.{0}".format(key))
-            text.setEditable(True) # allow copy-paste
-            text.setCallback(textbox_callback) # disable changes
-            text.setFont("mono-bold")
-            text.setFixedWidth(half_width - 40)
+            IconBox(wrapper, key, fontawesome.__dict__[key], half_width)
 
     screen.performLayout()
     screen.drawAll()

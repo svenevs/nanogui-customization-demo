@@ -1,11 +1,30 @@
-/*******************************************************************************
- * This file is part of an example repository for NanoGUI.  Use of this source *
- * code is governed by a BSD-style license that can be found in the            *
- * LICENSE file:                                                               *
- *                                                                             *
- * https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE   *
- ******************************************************************************/
-#include "custom_screen.hpp"
+/***************************************************************************************
+ * This is free and unencumbered software released into the public domain.             *
+ *                                                                                     *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or                     *
+ * distribute this software, either in source code form or as a compiled               *
+ * binary, for any purpose, commercial or non-commercial, and by any                   *
+ * means.                                                                              *
+ *                                                                                     *
+ * In jurisdictions that recognize copyright laws, the author or authors               *
+ * of this software dedicate any and all copyright interest in the                     *
+ * software to the public domain. We make this dedication for the benefit              *
+ * of the public at large and to the detriment of our heirs and                        *
+ * successors. We intend this dedication to be an overt act of                         *
+ * relinquishment in perpetuity of all present and future rights to this               *
+ * software under copyright law.                                                       *
+ *                                                                                     *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,                     *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                  *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.              *
+ * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR                   *
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,               *
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR               *
+ * OTHER DEALINGS IN THE SOFTWARE.                                                     *
+ *                                                                                     *
+ * For more information, please refer to <http://unlicense.org>                        *
+ **************************************************************************************/
+#include "make_compare_window.hpp" // includes custom_screen and custom_theme
 
 #include <nanogui/nanogui.h>
 
@@ -57,7 +76,7 @@ int main(void) {
             // add some vertical spacing (two widgets per row)
             new Label(window, " "); new Label(window, " ");
             // add the entypo icon
-            auto *l = new Label(window, std::string(nanogui::utf8(pair.first).data()), "icons");
+            new Label(window, std::string(nanogui::utf8(pair.first).data()), "icons");
             // add the fontawesome icon
             new Label(window, std::string(nanogui::utf8(pair.second).data()), "fontawesome");
         }
@@ -66,11 +85,11 @@ int main(void) {
         window->setFixedWidth(125);
 
         // make one with the default theme
-        window = screen->makeCompareWindow("Default Theme", ThemeChoice::Default);
+        window = makeCompareWindow(screen, "Default Theme", ThemeChoice::Default);
         window->setPosition({150, 0});
 
         // make one with the custom theme
-        window = screen->makeCompareWindow("Fontawesome Icon Theme", ThemeChoice::Fontawesome);
+        window = makeCompareWindow(screen, "Fontawesome Icon Theme", ThemeChoice::Fontawesome);
         window->setPosition({475, 0});
 
         screen->setVisible(true);

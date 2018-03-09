@@ -1,3 +1,8 @@
+########################################################################################
+# This file is licensed under CC0:                                                     #
+#                                                                                      #
+#      https://github.com/svenevs/nanogui-customization-demo/blob/master/LICENSE       #
+########################################################################################
 project("nanogui-customization-demo")
 cmake_minimum_required(VERSION 3.1.3 FATAL_ERROR)
 
@@ -31,6 +36,13 @@ set(NANOGUI_BUILD_EXAMPLE ON  CACHE BOOL " " FORCE)# dev repo, testing c++ examp
 set(NANOGUI_BUILD_PYTHON  ON  CACHE BOOL " " FORCE)# dev repo, testing python examples
 set(NANOGUI_INSTALL       OFF CACHE BOOL " " FORCE)
 
+if (NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ext/nanogui/include")
+  message(FATAL_ERROR "The NanoGUI dependency is missing!  You probably did not "
+                      "clone the project with --recursive. It is possible to "
+                      "recover by calling\n    "
+                      "git submodule update --init --recursive")
+endif()
+
 # Add the configurations from nanogui
 add_subdirectory(ext/nanogui)
 
@@ -47,6 +59,7 @@ add_executable(example_customization
   cpp/custom_screen.hpp
   cpp/custom_theme.hpp
   cpp/gl_texture.hpp
+  cpp/make_compare_window.hpp
   cpp/example_customization.cpp
 )
 
@@ -58,6 +71,7 @@ add_executable(example_custom_icon_font
   cpp/custom_screen.hpp
   cpp/custom_theme.hpp
   cpp/gl_texture.hpp
+  cpp/make_compare_window.hpp
   cpp/example_custom_icon_font.cpp
 )
 target_link_libraries(example_custom_icon_font nanogui ${NANOGUI_EXTRA_LIBS})
@@ -112,6 +126,8 @@ list(APPEND CUSTOM_PYTHON_TESTS example_fontawesome.py)
 list(APPEND CUSTOM_PYTHON_TESTS example_custom_icon_font.py)
 list(APPEND CUSTOM_PYTHON_TESTS custom_screen.py)
 list(APPEND CUSTOM_PYTHON_TESTS custom_theme.py)
+list(APPEND CUSTOM_PYTHON_TESTS make_compare_window.py)
+list(APPEND CUSTOM_PYTHON_TESTS theme_builder.py)
 foreach(py ${CUSTOM_PYTHON_TESTS})
   file(
     COPY "${CMAKE_CURRENT_SOURCE_DIR}/python/${py}"
