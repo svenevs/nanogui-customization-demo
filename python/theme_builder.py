@@ -85,6 +85,7 @@ class DynamicTheme(nanogui.Theme):
                     mButtonGradientTopPushed          = {mButtonGradientTopPushed};
                     mButtonGradientBotPushed          = {mButtonGradientBotPushed};
 
+                    mTooltipOpacity                   = {mTooltipOpacity};
                     mTooltipBackgroundColor           = {mTooltipBackgroundColor};
                     mTooltipTextColor                 = {mTooltipTextColor};
 
@@ -141,6 +142,7 @@ class DynamicTheme(nanogui.Theme):
             mButtonGradientTopPushed=col_str(self.mButtonGradientTopPushed),
             mButtonGradientBotPushed=col_str(self.mButtonGradientBotPushed),
 
+            mTooltipOpacity=self.mTooltipOpacity,
             mTooltipBackgroundColor=col_str(self.mTooltipBackgroundColor),
             mTooltipTextColor=col_str(self.mTooltipTextColor),
 
@@ -215,6 +217,7 @@ class DynamicTheme(nanogui.Theme):
                     self.mButtonGradientTopPushed          = {mButtonGradientTopPushed}
                     self.mButtonGradientBotPushed          = {mButtonGradientBotPushed}
 
+                    self.mTooltipOpacity                   = {mTooltipOpacity}
                     self.mTooltipBackgroundColor           = {mTooltipBackgroundColor}
                     self.mTooltipTextColor                 = {mTooltipTextColor}
 
@@ -269,6 +272,7 @@ class DynamicTheme(nanogui.Theme):
             mButtonGradientTopPushed=col_str(self.mButtonGradientTopPushed),
             mButtonGradientBotPushed=col_str(self.mButtonGradientBotPushed),
 
+            mTooltipOpacity=self.mTooltipOpacity,
             mTooltipBackgroundColor=col_str(self.mTooltipBackgroundColor),
             mTooltipTextColor=col_str(self.mTooltipTextColor),
 
@@ -336,6 +340,7 @@ class DynamicTheme(nanogui.Theme):
               "mButtonGradientTopPushed":           {mButtonGradientTopPushed},
               "mButtonGradientBotPushed":           {mButtonGradientBotPushed},
 
+              "mTooltipOpacity":                    {mTooltipOpacity},
               "mTooltipBackgroundColor":            {mTooltipBackgroundColor},
               "mTooltipTextColor":                  {mTooltipTextColor},
 
@@ -388,6 +393,7 @@ class DynamicTheme(nanogui.Theme):
             mButtonGradientTopPushed=col_str(self.mButtonGradientTopPushed),
             mButtonGradientBotPushed=col_str(self.mButtonGradientBotPushed),
 
+            mTooltipOpacity=self.mTooltipOpacity,
             mTooltipBackgroundColor=col_str(self.mTooltipBackgroundColor),
             mTooltipTextColor=col_str(self.mTooltipTextColor),
 
@@ -414,6 +420,7 @@ class DynamicTheme(nanogui.Theme):
             "mButtonCornerRadius", "mTabBorderWidth", "mTabInnerMargin",
             "mTabMinButtonWidth", "mTabMaxButtonWidth", "mTabControlWidth",
             "mTabButtonHorizontalPadding", "mTabButtonVerticalPadding",
+            "mTooltipOpacity"  # not a size, but is a float so do here
         ]
         for s in sizes:
             if s in values:
@@ -756,6 +763,7 @@ def themeWindow(screen, dynamicTheme):
     # Tooltip Colors                                                                   #
     ####################################################################################
     nanogui.Label(wrapper, "Tooltip Colors", "sans-bold")
+    numberPicker(wrapper, dynamicTheme, "mTooltipOpacity")
     colorPicker(wrapper, dynamicTheme, "mTooltipBackgroundColor")
     colorPicker(wrapper, dynamicTheme, "mTooltipTextColor")
     ####################################################################################
