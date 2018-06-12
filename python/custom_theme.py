@@ -82,6 +82,10 @@ class CustomTheme(nanogui.Theme):
 
     def __init__(self, ctx):
         super(CustomTheme, self).__init__(ctx)
+        # override the default fonts
+        self.mDefaultFont     = "spectral"
+        self.mDefaultBoldFont = "spectral-bold"
+
         # two additional fonts loaded that are not defaults, but can be used
         # independently e.g. new Label(parent, "label", "spirax")
         self.mSpiraxFont = nanogui.createFontMem(ctx, "spirax", "Spirax-Regular.ttf")
@@ -91,8 +95,8 @@ class CustomTheme(nanogui.Theme):
             raise RuntimeError("Could not load the `spirax` or `membra` fonts!")
 
         # load the default fonts for this theme
-        self.mSpectralFont     = nanogui.createFontMem(ctx, "spectral", "SpectralSC-Regular.ttf")
-        self.mSpectralBoldFont = nanogui.createFontMem(ctx, "spectral-bold", "SpectralSC-Bold.ttf")
+        self.mSpectralFont     = nanogui.createFontMem(ctx, self.mDefaultFont, "SpectralSC-Regular.ttf")
+        self.mSpectralBoldFont = nanogui.createFontMem(ctx, self.mDefaultBoldFont, "SpectralSC-Bold.ttf")
 
         if self.mSpectralFont == -1 or self.mSpectralBoldFont == -1:
             raise RuntimeError("Could not load the `spectral` fonts!")
@@ -176,7 +180,9 @@ class FontawesomeTheme(nanogui.Theme):
 
     def __init__(self, ctx):
         super(FontawesomeTheme, self).__init__(ctx)
-        self.mFontAwesomeFont = nanogui.createFontMem(ctx, "fontawesome", "fontawesome.ttf")
+        # override the default icon font
+        self.mDefaultIconFont = "fontawesome"
+        self.mFontAwesomeFont = nanogui.createFontMem(ctx, self.mDefaultIconFont, "fontawesome.ttf")
         if self.mFontAwesomeFont == -1:
             raise RuntimeError("Could not load the fontawesome font!")
 

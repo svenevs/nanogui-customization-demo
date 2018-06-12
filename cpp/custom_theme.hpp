@@ -79,13 +79,11 @@ The JSON for this class::
 /// Colors loosely inspired by Solarized Light: http://ethanschoonover.com/solarized
 class CustomTheme : public nanogui::Theme {
 public:
-    /// The ``"spectral"`` font.  Overriding this method is what informs NanoGUI to use it.
-    virtual std::string defaultFont() const override { return "spectral"; }
-
-    /// The ``"spectral-bold"`` font.  Overriding this method is what informs NanoGUI to use it.
-    virtual std::string defaultBoldFont() const override { return "spectral-bold"; }
-
     CustomTheme(NVGcontext *ctx) : nanogui::Theme(ctx) {
+        // override the default fonts
+        mDefaultFont     = "spectral";
+        mDefaultBoldFont = "spectral-bold";
+
         // two additional fonts loaded that are not defaults, but can be used
         // independently e.g. new Label(parent, "label", "spirax")
         mSpiraxFont = nanogui::createFontMem(ctx, "spirax", "Spirax-Regular.ttf");
@@ -96,8 +94,8 @@ public:
             throw std::runtime_error("Could not load the `spirax` or `membra` fonts!");
 
         // load the default fonts for this theme
-        mSpectralFont     = nanogui::createFontMem(ctx, "spectral", "SpectralSC-Regular.ttf");
-        mSpectralBoldFont = nanogui::createFontMem(ctx, "spectral-bold", "SpectralSC-Bold.ttf");
+        mSpectralFont     = nanogui::createFontMem(ctx, mDefaultFont.c_str(), "SpectralSC-Regular.ttf");
+        mSpectralBoldFont = nanogui::createFontMem(ctx, mDefaultBoldFont.c_str(), "SpectralSC-Bold.ttf");
 
         if (mSpectralFont == -1 || mSpectralBoldFont == -1)
             throw std::runtime_error("Could not load the `spectral` fonts!");
@@ -170,11 +168,10 @@ protected:
 
 class FontawesomeTheme : public nanogui::Theme {
 public:
-    /// The ``"fontawesome"`` icon font.  Overriding this method is what informs NanoGUI to use it.
-    virtual std::string defaultIconFont() const override { return "fontawesome"; }
-
     FontawesomeTheme(NVGcontext *ctx) : nanogui::Theme(ctx) {
-        mFontAwesomeFont = nanogui::createFontMem(ctx, "fontawesome", "fontawesome.ttf");
+        // override the default icon font
+        mDefaultIconFont = "fontawesome";
+        mFontAwesomeFont = nanogui::createFontMem(ctx, mDefaultIconFont.c_str(), "fontawesome.ttf");
         if (mFontAwesomeFont == -1)
             throw std::runtime_error("Could not load the fontawesome font!");
 

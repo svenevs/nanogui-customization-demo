@@ -17,12 +17,11 @@ using namespace nanogui;
 // Custom theme for loading the fontawesome font
 class FontawesomeTheme : public nanogui::Theme {
 public:
-    // This override informs NanoGUI to use this as the icon font.
-    virtual std::string defaultIconFont() const override { return "fontawesome"; }
-
     FontawesomeTheme(NVGcontext *ctx) : nanogui::Theme(ctx) {
+        // override default icon font globally
+        mDefaultIconFont = "fontawesome";
         // load the fontawesome font into memory
-        mFontawesomeFont = nanogui::createFontMem(ctx, "fontawesome", "fontawesome.ttf");
+        mFontawesomeFont = nanogui::createFontMem(ctx, mDefaultIconFont.c_str(), "fontawesome.ttf");
         if (mFontawesomeFont == -1)
             throw std::runtime_error("Could not load the fontawesome font!");
 

@@ -222,10 +222,17 @@ nanogui::Window *makeCompareWindow(CustomScreen *screen, const std::string &titl
 
         // regular buttons
         Button *button = new Button(layer, "PushButton");
+
+        // test that non-bold fonts for buttons work (applying to radio buttons)
+        std::string radio_font = window->theme()->mDefaultFont;
+
         button = new Button(layer, "Radio 1 (Hover for Tooltip)");
+        button->setFont(radio_font);
         button->setFlags(Button::Flags::RadioButton);
         button->setTooltip("Short tooltip!");
+
         button = new Button(layer, "Radio 2 (Hover for Tooltip)");
+        button->setFont(radio_font);
         button->setFlags(Button::Flags::RadioButton);
         button->setTooltip(
             "This is a much longer tooltip that will get wrapped automatically!"

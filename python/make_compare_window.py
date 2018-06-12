@@ -88,10 +88,18 @@ def makeCompareWindow(screen, title, themeChoice):
     # test ImageView fonts (needs callback, scroll up on image to see)
     if not isinstance(themeChoice, nanogui.Theme):
         nanogui.Label(window, "Image View (Mouse Over Image and Scroll Up)")
-        # NOTE: screen.icons loaded in constructor!
-        imageView = nanogui.ImageView(window, screen.icons[0][0])
-        imageView.setGridThreshold(20)
-        imageView.setPixelInfoThreshold(20)
+        # NOTE: screen.icons loaded in constructor!  On Linux the ordering is
+        #       not alphanumeric (it seems to be by image size?), hence the loop
+        imageView = None
+        for identifier, basename in screen.icons:
+            if "icon1" in basename:
+                imageView = nanogui.ImageView(window, identifier)
+                imageView.setGridThreshold(20)
+                imageView.setPixelInfoThreshold(20)
+                break
+
+        if imageView is None:
+            raise RuntimeError("Critical error: icon1 not found in CustomScreen.icons!")
 
         def img_view_cb(index):
             stringData = ""
@@ -228,10 +236,20 @@ def makeCompareWindow(screen, title, themeChoice):
 
     # regular buttons
     button = nanogui.Button(layer, "PushButton")
+
+    # test that non-bold fonts for buttons work (applying to radio buttons)
+    if isinstance(themeChoice, nanogui.Theme):
+        radio_font = themeChoice.mDefaultFont
+    else:
+        # dynamic theme case, this will just be 'sans'
+        radio_font = nanogui.Theme.GlobalDefaultFonts.Normal
     button = nanogui.Button(layer, "Radio1 (Hover for Tooltip)")
+    button.setFont(radio_font)
     button.setFlags(nanogui.Button.Flags.RadioButton)
     button.setTooltip("Short tooltip!")
+
     button = nanogui.Button(layer, "Radio2 (Hover for Tooltip)")
+    button.setFont(radio_font)
     button.setFlags(nanogui.Button.Flags.RadioButton)
     button.setTooltip(
         "This is a much longer tooltip that will get wrapped automatically!"

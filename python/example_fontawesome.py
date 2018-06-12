@@ -16,12 +16,11 @@ from nanogui import fontawesome
 
 
 class FontawesomeTheme(nanogui.Theme):
-    # This override informs NanoGUI to use this as the icon font.
-    def defaultIconFont(self):
-        return "fontawesome"
-
     def __init__(self, ctx):
         super(FontawesomeTheme, self).__init__(ctx)
+        # override default icon font globally
+        self.mDefaultIconFont = "fontawesome";
+        # load the fontawesome font into memory
         self.mFontawesomeFont = nanogui.createFontMem(ctx, "fontawesome", "fontawesome.ttf")
         if self.mFontawesomeFont == -1:
             raise RuntimeError("Could not load the fontawesome font!")
