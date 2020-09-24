@@ -3,6 +3,14 @@
 [![Build Status Travis](https://travis-ci.org/svenevs/nanogui-customization-demo.svg?branch=master)](https://travis-ci.org/svenevs/nanogui-customization-demo)
 [![Build status Appveyor](https://ci.appveyor.com/api/projects/status/5sxk8hvkcq0xgm5x?svg=true)](https://ci.appveyor.com/project/svenevs/nanogui-customization-demo)
 
+# DANGER
+
+This was a failed prototype, follow [mitsuba-renderer/nanogui #57](https://github.com/mitsuba-renderer/nanogui/issues/57) to know when custom theming is implemented.
+
+THIS REPO IS STALE and only works off changes to the old wjakob/nanogui fork. The theme builder will not give you valid class definitions unless you're using the fork I have here, which is also stale!
+
+# What is This?
+
 This repository includes code demonstrating how to customize the [NanoGUI][nanogui]
 theme, and embedding custom fonts and icon fonts.
 
